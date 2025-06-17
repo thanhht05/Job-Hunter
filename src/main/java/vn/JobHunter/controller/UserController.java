@@ -34,11 +34,6 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(userCreate);
     }
 
-    @ExceptionHandler(IdInvalidException.class)
-    public ResponseEntity<String> handleResourceNotFoundException(IdInvalidException invalidException) {
-        return ResponseEntity.badRequest().body(invalidException.getMessage());
-    }
-
     @DeleteMapping("/users/{id}")
     public ResponseEntity<Void> handleDeleteUser(@PathVariable("id") Long id) throws IdInvalidException {
         if (id > 100) {
