@@ -3,14 +3,16 @@ package vn.JobHunter.controller;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
 
+import vn.JobHunter.domain.RestResponse;
 import vn.JobHunter.domain.User;
 import vn.JobHunter.service.UserService;
-import vn.JobHunter.service.exception.IdInvalidException;
+import vn.JobHunter.util.exception.IdInvalidException;
 
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,17 +20,35 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @RestController
 public class UserController {
     private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, PasswordEncoder passwordEncoder) {
         this.userService = userService;
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    @GetMapping("/")
+    public ResponseEntity<User> getMethodName() {
+        Long id = (long) 9;
+        User user = this.userService.handleFetchUserById(id);
+        RestResponse<String> response = new RestResponse<>();
+        response.setStatusCode(200);
+        response.setMessage("Welcome!");
+        response.setData("This is public data");
+        return ResponseEntity.ok().body(user);
     }
 
     @PostMapping("/users")
     public ResponseEntity<User> handleCreateUser(@RequestBody User user) {
+
+        String hashPassword = passwordEncoder.encode(user.getPassword());
+        user.setPassword(hashPassword);
         User userCreate = this.userService.SaveUser(user);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(userCreate);
