@@ -26,6 +26,10 @@ public class FromatRestResponse implements ResponseBodyAdvice {
 
         RestResponse<Object> fromatRestResponse = new RestResponse<>();
         fromatRestResponse.setStatusCode(statusCode);
+
+        if (body instanceof String) {
+            return body;
+        }
         if (statusCode >= 400) {
             return body;
 
