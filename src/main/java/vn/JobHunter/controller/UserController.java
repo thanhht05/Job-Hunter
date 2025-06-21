@@ -12,6 +12,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -64,7 +65,7 @@ public class UserController {
     }
 
     @GetMapping("/users/{id}")
-    public ResponseEntity<User> handleGetUserByid(@PathVariable("id") Long id) {
+    public ResponseEntity<User> handleGetUserByid(@PathVariable("id") Long id) throws UsernameNotFoundException {
         User user = this.userService.handleFetchUserById(id);
         return ResponseEntity.ok(user);
     }

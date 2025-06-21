@@ -3,8 +3,11 @@ package vn.JobHunter.service;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import jakarta.persistence.EntityNotFoundException;
 import vn.JobHunter.domain.User;
 import vn.JobHunter.repository.UserRepository;
 
@@ -27,6 +30,9 @@ public class UserService {
 
     public User handleFetchUserById(Long id) {
         Optional<User> userOptional = this.userRepository.findById(id);
+        if (!userOptional.isPresent()) {
+            throw new EntityNotFoundException("User not found");
+        }
         if (userOptional.isPresent()) {
             return userOptional.get();
         }
