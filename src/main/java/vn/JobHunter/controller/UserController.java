@@ -8,7 +8,9 @@ import vn.JobHunter.domain.User;
 import vn.JobHunter.service.UserService;
 import vn.JobHunter.util.exception.IdInvalidException;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,14 +37,10 @@ public class UserController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<User> getMethodName() {
-        Long id = (long) 9;
-        User user = this.userService.handleFetchUserById(id);
-        RestResponse<String> response = new RestResponse<>();
-        response.setStatusCode(200);
-        response.setMessage("Welcome!");
-        response.setData("This is public data");
-        return ResponseEntity.ok().body(user);
+    public ResponseEntity<Object> hello() {
+        RestResponse<Object> res = new RestResponse<>();
+        res.setMessage("hiihihi");
+        return ResponseEntity.ok(res);
     }
 
     @PostMapping("/users")

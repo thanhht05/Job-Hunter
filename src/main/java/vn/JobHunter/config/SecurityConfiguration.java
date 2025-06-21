@@ -22,6 +22,7 @@ import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthen
 import org.springframework.security.oauth2.server.resource.web.access.BearerTokenAccessDeniedHandler;
 import org.springframework.security.web.SecurityFilterChain;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.jose.jwk.source.ImmutableSecret;
 import com.nimbusds.jose.util.Base64;
 
@@ -41,15 +42,16 @@ public class SecurityConfiguration {
             CustomAuthenticationEntryPoint authenticationEntryPoint) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
+                .cors(Customizer.withDefaults())
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers("/", "/login").permitAll()
                         .anyRequest().authenticated()
 
                 )
 
-                .exceptionHandling(ex -> ex
-                        .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
-                        .accessDeniedHandler(new BearerTokenAccessDeniedHandler()))
+                // .exceptionHandling(ex -> ex
+                // .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
+                // .accessDeniedHandler(new BearerTokenAccessDeniedHandler()))
 
                 .oauth2ResourceServer((oauth2) -> oauth2.jwt(Customizer.withDefaults())
                         .authenticationEntryPoint(authenticationEntryPoint))
@@ -90,5 +92,10 @@ public class SecurityConfiguration {
 
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
         return jwtAuthenticationConverter;
+    }
+
+    @Bean
+    public CustomAuthenticationEntryPoint customAuthenticationEntryPoint(ObjectMapper mp) {
+        return new CustomAuthenticationEntryPoint(mp);
     }
 }

@@ -1,6 +1,7 @@
 package vn.JobHunter.config;
 
 import java.io.IOException;
+import java.util.Optional;
 
 import org.apache.catalina.mapper.Mapper;
 import org.springframework.http.HttpStatus;
@@ -17,7 +18,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import vn.JobHunter.domain.RestResponse;
 
-@Component
+// @Component  switched into security config
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
     private final ObjectMapper mapper;
     private final AuthenticationEntryPoint delegate = new BearerTokenAuthenticationEntryPoint();
@@ -35,7 +36,11 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
 
         RestResponse<Object> res = new RestResponse<>();
         res.setStatusCode(HttpStatus.UNAUTHORIZED.value());
-        res.setError(authException.getCause().getMessage());
+
+        String errorMessage = Optional.ofNullable(authException.getCause())
+                .map(Throwable::getMessage)
+                .orElse(authException.getMessage());
+        res.setError(errorMessage);
         res.setMessage("Token không hợp lệ(hết hạn , không đúng định dạnh)");
 
         mapper.writeValue(response.getWriter(), res);
