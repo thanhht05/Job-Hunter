@@ -11,7 +11,11 @@ import vn.JobHunter.util.exception.IdInvalidException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -69,8 +73,23 @@ public class UserController {
     }
 
     @GetMapping("/users")
-    public ResponseEntity<List<User>> handleGetAllUsers() {
-        List<User> users = this.userService.handleFetchAllUsers();
+    public ResponseEntity<Page<User>> handleGetAllUsers(@RequestParam("page") Optional<String> page) {
+        int pageNumber = 0;
+        if (page.isPresent()) {
+            try {
+                pageNumber = Integer.parseInt(page.get()) - 1;
+
+                if (pageNumber < 0)
+                    pageNumber = 0;
+
+            } catch (Exception e) {
+                pageNumber = 0;
+            }
+
+        }
+        Pageable pageable = PageRequest.of(pageNumber, 2);
+        Page<User> users = this.userService.handleFetchAllUsers(pageable);
+
         return ResponseEntity.ok(users);
     }
 

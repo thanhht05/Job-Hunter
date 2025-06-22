@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -39,8 +41,8 @@ public class UserService {
         return null;
     }
 
-    public List<User> handleFetchAllUsers() {
-        List<User> users = this.userRepository.findAll();
+    public Page<User> handleFetchAllUsers(Pageable pageable) {
+        Page<User> users = this.userRepository.findAll(pageable);
         return users;
     }
 
