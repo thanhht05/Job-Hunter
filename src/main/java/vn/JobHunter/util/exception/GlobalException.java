@@ -14,6 +14,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import jakarta.persistence.EntityNotFoundException;
 import vn.JobHunter.domain.RestResponse;
@@ -21,12 +22,18 @@ import vn.JobHunter.domain.RestResponse;
 @RestControllerAdvice
 public class GlobalException {
 
-    @ExceptionHandler(IdInvalidException.class)
-    public ResponseEntity<RestResponse<Object>> handleResourceNotFoundException(IdInvalidException invalidException) {
+    @ExceptionHandler(value = {
+            BadCredentialsException.class,
+            IdInvalidException.class,
+            UsernameNotFoundException.class,
+            EntityNotFoundException.class
+    })
+
+    public ResponseEntity<RestResponse<Object>> handleException(Exception ex) {
         RestResponse<Object> res = new RestResponse<>();
         res.setStatusCode(HttpStatus.BAD_REQUEST.value());
-        res.setError(invalidException.getMessage());
-        res.setMessage("IdInvalidException");
+        res.setError(ex.getMessage());
+        res.setMessage("Exception occurs");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
     }
 
@@ -46,22 +53,15 @@ public class GlobalException {
 
     }
 
-    @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<RestResponse<Object>> handleBadCredentialsException(BadCredentialsException ex) {
+    @ExceptionHandler(value = {
+            NoResourceFoundException.class
+    })
+    public ResponseEntity<RestResponse<Object>> handleNoResourceFoundException(NoResourceFoundException ex) {
         RestResponse<Object> res = new RestResponse<>();
-        res.setStatusCode(HttpStatus.BAD_REQUEST.value());
+        res.setStatusCode(HttpStatus.NOT_FOUND.value());
         res.setError(ex.getMessage());
-        res.setMessage("BadCredentials Exepcion");
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
-
+        res.setMessage("404 NOT FOUND. URL may not exist");
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(res);
     }
 
-    @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<RestResponse<Object>> handleUsernameNotFoundException(EntityNotFoundException ex) {
-        RestResponse<Object> res = new RestResponse<>();
-        res.setStatusCode(HttpStatus.UNAUTHORIZED.value());
-        res.setError(ex.getMessage());
-        res.setMessage("User không tồn tại trong hệ thống");
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(res);
-    }
 }
