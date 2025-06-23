@@ -61,7 +61,7 @@ public class GlobalException {
         RestResponse<Object> res = new RestResponse<>();
         res.setStatusCode(HttpStatus.UNAUTHORIZED.value());
         res.setError(ex.getMessage());
-        res.setMessage("UsernameNotFoundException");
+        res.setMessage("User không tồn tại trong hệ thống");
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(res);
     }
 }

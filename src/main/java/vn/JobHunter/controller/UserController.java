@@ -3,9 +3,15 @@ package vn.JobHunter.controller;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
 
+import com.turkraft.springfilter.boot.Filter;
+
 import vn.JobHunter.domain.RestResponse;
+import vn.JobHunter.domain.SearchCriteria;
 import vn.JobHunter.domain.User;
+import vn.JobHunter.domain.dto.ResultPaginationDto;
 import vn.JobHunter.service.UserService;
+import vn.JobHunter.service.UserSpecification;
+import vn.JobHunter.util.annotation.ApiMessage;
 import vn.JobHunter.util.exception.IdInvalidException;
 
 import java.util.HashMap;
@@ -16,6 +22,7 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -67,28 +74,16 @@ public class UserController {
     }
 
     @GetMapping("/users/{id}")
-    public ResponseEntity<User> handleGetUserByid(@PathVariable("id") Long id) throws UsernameNotFoundException {
+    public ResponseEntity<User> handleGetUserById(@PathVariable("id") Long id) throws UsernameNotFoundException {
         User user = this.userService.handleFetchUserById(id);
         return ResponseEntity.ok(user);
     }
 
     @GetMapping("/users")
-    public ResponseEntity<Page<User>> handleGetAllUsers(@RequestParam("page") Optional<String> page) {
-        int pageNumber = 0;
-        if (page.isPresent()) {
-            try {
-                pageNumber = Integer.parseInt(page.get()) - 1;
+    @ApiMessage("Fetch all users")
+    public ResponseEntity<ResultPaginationDto> handleGetAllUsers(@Filter Specification<User> spec, Pageable pageable) {
 
-                if (pageNumber < 0)
-                    pageNumber = 0;
-
-            } catch (Exception e) {
-                pageNumber = 0;
-            }
-
-        }
-        Pageable pageable = PageRequest.of(pageNumber, 2);
-        Page<User> users = this.userService.handleFetchAllUsers(pageable);
+        ResultPaginationDto users = this.userService.handleFetchAllUsers(pageable, spec);
 
         return ResponseEntity.ok(users);
     }

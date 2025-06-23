@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
 import vn.JobHunter.domain.Company;
 import vn.JobHunter.service.CompanyService;
+import vn.JobHunter.util.annotation.ApiMessage;
 
 import java.util.List;
 
@@ -34,6 +35,7 @@ public class CompanyController {
     }
 
     @GetMapping("/companies")
+    @ApiMessage("Fetch all companies")
     public ResponseEntity<List<Company>> handleGetAllComapny() {
         List<Company> companies = this.companyService.fetchAllCompanies();
         return ResponseEntity.ok().body(companies);
