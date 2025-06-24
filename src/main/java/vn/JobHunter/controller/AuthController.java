@@ -3,8 +3,10 @@ package vn.JobHunter.controller;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
+import vn.JobHunter.domain.User;
 import vn.JobHunter.domain.dto.ResponeLoginDto;
 import vn.JobHunter.domain.dto.UserDto;
+import vn.JobHunter.service.UserService;
 import vn.JobHunter.util.SecurityUtil;
 
 import org.springframework.http.ResponseEntity;
@@ -20,15 +22,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RestController
 @RequestMapping("/api/v1")
 public class AuthController {
+    private final UserService userService;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final PasswordEncoder passwordEncoder;
     private final SecurityUtil securityUtil;
 
     public AuthController(AuthenticationManagerBuilder authenticationManagerBuilder, PasswordEncoder passwordEncoder,
-            SecurityUtil securityUtil) {
+            SecurityUtil securityUtil, UserService userService) {
         this.authenticationManagerBuilder = authenticationManagerBuilder;
         this.passwordEncoder = passwordEncoder;
         this.securityUtil = securityUtil;
+        this.userService = userService;
     }
 
     @PostMapping("/login")
@@ -40,12 +44,17 @@ public class AuthController {
         // xác thực người dùng => cần viết hàm loadUserByUsername
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
-        String accessToke = this.securityUtil.createToken(authentication);
+        String accessToken = this.securityUtil.createToken(authentication);
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         ResponeLoginDto responeLoginDto = new ResponeLoginDto();
-        responeLoginDto.setAccessToken(accessToke);
+        User curUser = this.userService.fetchUserByUsername(uDto.getEmail());
+        ResponeLoginDto.UserLogin userLogin = new ResponeLoginDto.UserLogin(curUser.getId(), curUser.getEmail(),
+                curUser.getFullName());
+
+        responeLoginDto.setUserLogin(userLogin);
+        responeLoginDto.setAccessToken(accessToken);
 
         return ResponseEntity.ok().body(responeLoginDto);
 
