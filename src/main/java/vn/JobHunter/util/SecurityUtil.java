@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import com.nimbusds.jose.util.Base64;
 
 import vn.JobHunter.config.SecurityConfiguration;
+import vn.JobHunter.domain.dto.ResponeLoginDto;
 
 @Service
 public class SecurityUtil {
@@ -35,15 +36,17 @@ public class SecurityUtil {
     }
 
     public static final MacAlgorithm JWT_ALGORITHM = MacAlgorithm.HS512;
-    @Value("${jwt.token-validity-in-seconds}")
-    private long jwtExpiration;
+    @Value("${jwt.access-token-validity-in-seconds}")
+    private long accessTokenExpiration;
+    @Value("${jwt.refresh-token-validity-in-seconds}")
+    private long refreshTokenExpiration;
 
-    public String createToken(Authentication authentication) {
+    public String createAccessToken(Authentication authentication) {
         String authorities = authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(" "));
 
         Instant now = Instant.now();
-        Instant validity = now.plus(this.jwtExpiration, ChronoUnit.SECONDS);
+        Instant validity = now.plus(this.accessTokenExpiration, ChronoUnit.SECONDS);
 
         // @formatter:off
             JwtClaimsSet claims = JwtClaimsSet.builder()
@@ -51,6 +54,22 @@ public class SecurityUtil {
                 .expiresAt(validity)
                 .subject(authentication.getName())
                 .claim("thanh", authentication)
+                .build();
+    
+            JwsHeader jwsHeader = JwsHeader.with(JWT_ALGORITHM).build();
+            return this.jwtEncoder.encode(JwtEncoderParameters.from(jwsHeader, claims)).getTokenValue();
+    }
+
+        public String createRefreshToken(String email, ResponeLoginDto res) {
+        Instant now = Instant.now();
+        Instant validity = now.plus(this.refreshTokenExpiration, ChronoUnit.SECONDS);
+
+        // @formatter:off
+            JwtClaimsSet claims = JwtClaimsSet.builder()
+                .issuedAt(now)
+                .expiresAt(validity)
+                .subject(email)
+                .claim("user", res.getUserLogin())
                 .build();
     
             JwsHeader jwsHeader = JwsHeader.with(JWT_ALGORITHM).build();

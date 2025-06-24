@@ -2,7 +2,7 @@ package vn.JobHunter.domain.dto;
 
 import jakarta.validation.constraints.NotBlank;
 
-public class UserDto {
+public class LoginDto {
     @NotBlank(message = "Username không được trống")
     private String email;
     @NotBlank(message = "Password không được trống")

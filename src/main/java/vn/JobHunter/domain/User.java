@@ -4,6 +4,7 @@ import java.sql.Date;
 import java.time.Instant;
 
 import jakarta.annotation.Generated;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -38,7 +39,7 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     private GenderEnum gender;
-
+    @Column(columnDefinition = "MEDIUMTEXT")
     private String refreshToken;
     private String createdBy;
     private String updatedBy;
