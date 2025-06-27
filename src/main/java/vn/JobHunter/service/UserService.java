@@ -15,10 +15,9 @@ import org.springframework.stereotype.Service;
 
 import jakarta.persistence.EntityNotFoundException;
 import vn.JobHunter.domain.User;
-import vn.JobHunter.domain.dto.Meta;
 import vn.JobHunter.domain.dto.ResCreateUserDto;
 import vn.JobHunter.domain.dto.ResUpdateUserDto;
-import vn.JobHunter.domain.dto.ResponeUserDto;
+import vn.JobHunter.domain.dto.ResponseUserDto;
 import vn.JobHunter.domain.dto.ResultPaginationDto;
 import vn.JobHunter.repository.UserRepository;
 
@@ -64,7 +63,7 @@ public class UserService {
     public ResultPaginationDto handleFetchAllUsers(Pageable pageable, Specification<User> spec) {
         Page<User> users = this.userRepository.findAll(spec, pageable);
         ResultPaginationDto resultPaginationDto = new ResultPaginationDto();
-        Meta meta = new Meta();
+        ResultPaginationDto.Meta meta = new ResultPaginationDto.Meta();
 
         meta.setPage(pageable.getPageNumber() + 1);// get current page number
         meta.setPageSize(pageable.getPageSize()); // get max-total elements
@@ -106,16 +105,16 @@ public class UserService {
         return userRepository.existsByEmail(email);
     }
 
-    public ResponeUserDto convertUserToUserCreateDto(User user) {
-        ResponeUserDto responeUserDto = new ResponeUserDto();
-        responeUserDto.setAddress(user.getAddress());
-        responeUserDto.setAge(user.getAge());
-        responeUserDto.setCreatedDate(user.getCreatedDate());
-        responeUserDto.setEmail(user.getEmail());
-        responeUserDto.setName(user.getName());
-        responeUserDto.setGender(user.getGender());
-        responeUserDto.setId(user.getId());
-        return responeUserDto;
+    public ResponseUserDto convertUserToUserCreateDto(User user) {
+        ResponseUserDto responseUserDto = new ResponseUserDto();
+        responseUserDto.setAddress(user.getAddress());
+        responseUserDto.setAge(user.getAge());
+        responseUserDto.setCreatedDate(user.getCreatedDate());
+        responseUserDto.setEmail(user.getEmail());
+        responseUserDto.setName(user.getName());
+        responseUserDto.setGender(user.getGender());
+        responseUserDto.setId(user.getId());
+        return responseUserDto;
     }
 
     public ResCreateUserDto convertUserToResUserDto(User user) {
@@ -132,7 +131,7 @@ public class UserService {
 
     }
 
-    public ResUpdateUserDto converUserToResUpdateUserDto(User user) {
+    public ResUpdateUserDto convertUserToResUpdateUserDto(User user) {
         ResUpdateUserDto res = new ResUpdateUserDto();
         res.setAddress(user.getAddress());
         res.setAge(user.getAge());

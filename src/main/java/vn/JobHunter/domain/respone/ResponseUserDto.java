@@ -8,11 +8,12 @@ import vn.JobHunter.util.constant.GenderEnum;
 
 @Getter
 @Setter
-public class ResUpdateUserDto {
+public class ResponseUserDto {
     private Long id;
-    private GenderEnum gender;
     private String name;
+    private String email;
+    private GenderEnum gender;
     private String address;
     private int age;
-    private Instant updatedAt;
+    private Instant createdDate;
 }

@@ -7,7 +7,7 @@ import jakarta.validation.Valid;
 import vn.JobHunter.domain.User;
 import vn.JobHunter.domain.dto.ResponeLoginDto;
 import vn.JobHunter.domain.dto.ResponeLoginDto.UserLogin;
-import vn.JobHunter.domain.dto.LoginDto;
+import vn.JobHunter.domain.dto.ReqLoginDto;
 import vn.JobHunter.service.UserService;
 import vn.JobHunter.util.SecurityUtil;
 import vn.JobHunter.util.annotation.ApiMessage;
@@ -51,7 +51,7 @@ public class AuthController {
         }
 
         @PostMapping("/auth/login")
-        public ResponseEntity<ResponeLoginDto> handleLogin(@Valid @RequestBody LoginDto uDto) {
+        public ResponseEntity<ResponeLoginDto> handleLogin(@Valid @RequestBody ReqLoginDto uDto) {
 
                 // Nạp input gồm username/password vào Security
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
@@ -63,11 +63,13 @@ public class AuthController {
                 // set user's login imformation into context ( can be used later)
                 SecurityContextHolder.getContext().setAuthentication(authentication);
 
+                // set result login
                 ResponeLoginDto responeLoginDto = new ResponeLoginDto();
                 User curUser = this.userService.fetchUserByUsername(uDto.getUsername());
                 ResponeLoginDto.UserLogin userLogin = new ResponeLoginDto.UserLogin(curUser.getId(), curUser.getEmail(),
                                 curUser.getName());
 
+                // create access token
                 String accessToken = this.securityUtil.createAccessToken(authentication.getName(), userLogin);
                 responeLoginDto.setAccessToken(accessToken);
                 responeLoginDto.setUser(userLogin);
@@ -167,6 +169,7 @@ public class AuthController {
                 // update refresh token
                 this.userService.updateUserToken(null, email);
 
+                // delete cookie
                 ResponseCookie deleteCookie = ResponseCookie
                                 .from("refreshToken", null)
                                 .httpOnly(true)

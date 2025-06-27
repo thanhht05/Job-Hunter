@@ -11,7 +11,7 @@ import vn.JobHunter.domain.SearchCriteria;
 import vn.JobHunter.domain.User;
 import vn.JobHunter.domain.dto.ResCreateUserDto;
 import vn.JobHunter.domain.dto.ResUpdateUserDto;
-import vn.JobHunter.domain.dto.ResponeUserDto;
+import vn.JobHunter.domain.dto.ResponseUserDto;
 import vn.JobHunter.domain.dto.ResultPaginationDto;
 import vn.JobHunter.service.UserService;
 import vn.JobHunter.service.UserSpecification;
@@ -55,7 +55,7 @@ public class UserController {
 
     @PostMapping("/users")
     @ApiMessage("Create a new user")
-    public ResponseEntity<ResponeUserDto> handleCreateUser(@Valid @RequestBody User user)
+    public ResponseEntity<ResponseUserDto> handleCreateUser(@Valid @RequestBody User user)
             throws IdInvalidException {
         boolean checkEmail = userService.checkExistsByEmail(user.getEmail());
         if (checkEmail) {
@@ -109,7 +109,7 @@ public class UserController {
         }
         this.userService.handleUpdateUser(userUpdate);
 
-        return ResponseEntity.status(HttpStatus.OK).body(this.userService.converUserToResUpdateUserDto(userUpdate));
+        return ResponseEntity.status(HttpStatus.OK).body(this.userService.convertUserToResUpdateUserDto(userUpdate));
     }
 
 }

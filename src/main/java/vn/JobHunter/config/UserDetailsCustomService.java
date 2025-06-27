@@ -1,4 +1,4 @@
-package vn.JobHunter.service;
+package vn.JobHunter.config;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
 import vn.JobHunter.repository.UserRepository;
+import vn.JobHunter.service.UserService;
 
 @Component("userDetailsService")
 public class UserDetailsCustomService implements UserDetailsService {

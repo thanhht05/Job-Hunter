@@ -1,4 +1,4 @@
-package vn.JobHunter.domain.dto;
+package vn.JobHunter.domain.respone;
 
 import java.time.Instant;
 
@@ -8,12 +8,11 @@ import vn.JobHunter.util.constant.GenderEnum;
 
 @Getter
 @Setter
-public class ResponeUserDto {
+public class ResUpdateUserDto {
     private Long id;
-    private String name;
-    private String email;
     private GenderEnum gender;
+    private String name;
     private String address;
     private int age;
-    private Instant createdDate;
+    private Instant updatedAt;
 }
