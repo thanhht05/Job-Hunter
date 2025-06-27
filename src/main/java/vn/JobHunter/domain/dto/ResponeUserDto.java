@@ -10,10 +10,10 @@ import vn.JobHunter.util.constant.GenderEnum;
 @Setter
 public class ResponeUserDto {
     private Long id;
-    private String fullName;
+    private String name;
     private String email;
     private GenderEnum gender;
     private String address;
     private int age;
-    private Instant createdAt;
+    private Instant createdDate;
 }

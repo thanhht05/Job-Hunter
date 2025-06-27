@@ -44,7 +44,7 @@ public class SecurityConfiguration {
                 .csrf(csrf -> csrf.disable())
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/", "api/v1/login").permitAll()
+                        .requestMatchers("/", "api/v1/auth/login", " api/v1/auth/refresh").permitAll()
                         .anyRequest().permitAll()
 
                 )
@@ -80,14 +80,22 @@ public class SecurityConfiguration {
     public JwtDecoder jwtDecoder() {
         NimbusJwtDecoder jwtDecoder = NimbusJwtDecoder.withSecretKey(getSecretKey())
                 .macAlgorithm(SecurityUtil.JWT_ALGORITHM).build();
-        return jwtDecoder;
+        return token -> {
+            try {
+                return jwtDecoder.decode(token);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        };
     }
 
     @Bean
     public JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
         grantedAuthoritiesConverter.setAuthorityPrefix("");
-        grantedAuthoritiesConverter.setAuthoritiesClaimName("thanh");
+        grantedAuthoritiesConverter.setAuthoritiesClaimName("permission");
         JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
 
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);

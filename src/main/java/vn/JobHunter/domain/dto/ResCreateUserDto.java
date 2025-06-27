@@ -14,11 +14,11 @@ import vn.JobHunter.util.constant.GenderEnum;
 @AllArgsConstructor
 public class ResCreateUserDto {
     private Long id;
-    private String fullName;
+    private String name;
     private String email;
     private GenderEnum gender;
     private String address;
     private int age;
-    private Instant createdAt;
+    private Instant createdDate;
     private Instant updatedAt;
 }

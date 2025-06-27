@@ -11,7 +11,7 @@ import vn.JobHunter.util.constant.GenderEnum;
 public class ResUpdateUserDto {
     private Long id;
     private GenderEnum gender;
-    private String fullName;
+    private String name;
     private String address;
     private int age;
     private Instant updatedAt;

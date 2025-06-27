@@ -28,7 +28,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    private String fullName;
+    private String name;
     @NotBlank(message = "Email không được để trống")
     private String email;
     @NotBlank(message = "Password không được để trống")
@@ -43,7 +43,7 @@ public class User {
     private String refreshToken;
     private String createdBy;
     private String updatedBy;
-    private Instant createdAt;
+    private Instant createdDate;
     private Instant updatedAt;
 
     @PrePersist
@@ -51,7 +51,7 @@ public class User {
         this.createdBy = SecurityUtil.getCurrentUserLogin().isPresent() == true
                 ? SecurityUtil.getCurrentUserLogin().get()
                 : "";
-        this.createdAt = Instant.now();
+        this.createdDate = Instant.now();
     }
 
     @PreUpdate

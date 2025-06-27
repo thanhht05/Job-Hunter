@@ -98,15 +98,16 @@ public class UserController {
         return ResponseEntity.ok(users);
     }
 
-    @PutMapping("users/{id}")
+    @PutMapping("/users")
     @ApiMessage("Update a user")
-    public ResponseEntity<ResUpdateUserDto> handleUpdateUser(@PathVariable("id") Long id, @RequestBody User user)
+    public ResponseEntity<ResUpdateUserDto> handleUpdateUser(@RequestBody User user)
             throws IdInvalidException {
         User userUpdate = this.userService.handleUpdateUser(user);
         if (userUpdate == null) {
-            throw new IdInvalidException("User với id " + id + " không tồn tại trong hệ thống");
+            throw new IdInvalidException("User  không tồn tại trong hệ thống");
 
         }
+        this.userService.handleUpdateUser(userUpdate);
 
         return ResponseEntity.status(HttpStatus.OK).body(this.userService.converUserToResUpdateUserDto(userUpdate));
     }

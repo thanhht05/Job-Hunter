@@ -43,7 +43,7 @@ public class UserService {
     public User handleUpdateUser(User user) {
         User curUser = handleFetchUserById(user.getId());
         if (curUser != null) {
-            curUser.setFullName(user.getFullName());
+            curUser.setName(user.getName());
             curUser.setGender(user.getGender());
             curUser.setAddress(user.getAddress());
             curUser.setAge(user.getAge());
@@ -74,7 +74,7 @@ public class UserService {
 
         // List<ResUserDto> resUserDtos = new ArrayList<>();
         // for (User user : users.getContent()) {
-        // ResUserDto resUserDto = new ResUserDto(user.getId(), user.getFullName(),
+        // ResUserDto resUserDto = new ResUserDto(user.getId(), user.getName(),
         // user.getEmail(), user.getGender(),
         // user.getAddress(), user.getAge(), user.getCreatedAt(), user.getUpdatedAt());
 
@@ -84,12 +84,12 @@ public class UserService {
                 .stream().map(item -> new ResCreateUserDto(
 
                         item.getId(),
-                        item.getFullName(),
+                        item.getName(),
                         item.getEmail(),
                         item.getGender(),
                         item.getAddress(),
                         item.getAge(),
-                        item.getCreatedAt(),
+                        item.getCreatedDate(),
                         item.getUpdatedAt()))
                 .collect(Collectors.toList());
         resultPaginationDto.setResult(resUserDtos);
@@ -110,9 +110,9 @@ public class UserService {
         ResponeUserDto responeUserDto = new ResponeUserDto();
         responeUserDto.setAddress(user.getAddress());
         responeUserDto.setAge(user.getAge());
-        responeUserDto.setCreatedAt(user.getCreatedAt());
+        responeUserDto.setCreatedDate(user.getCreatedDate());
         responeUserDto.setEmail(user.getEmail());
-        responeUserDto.setFullName(user.getFullName());
+        responeUserDto.setName(user.getName());
         responeUserDto.setGender(user.getGender());
         responeUserDto.setId(user.getId());
         return responeUserDto;
@@ -122,9 +122,9 @@ public class UserService {
         ResCreateUserDto resUserDto = new ResCreateUserDto();
         resUserDto.setAddress(user.getAddress());
         resUserDto.setAge(user.getAge());
-        resUserDto.setCreatedAt(user.getCreatedAt());
+        resUserDto.setCreatedDate(user.getCreatedDate());
         resUserDto.setEmail(user.getEmail());
-        resUserDto.setFullName(user.getFullName());
+        resUserDto.setName(user.getName());
         resUserDto.setGender(user.getGender());
         resUserDto.setId(user.getId());
         resUserDto.setUpdatedAt(user.getUpdatedAt());
@@ -136,7 +136,7 @@ public class UserService {
         ResUpdateUserDto res = new ResUpdateUserDto();
         res.setAddress(user.getAddress());
         res.setAge(user.getAge());
-        res.setFullName(user.getFullName());
+        res.setName(user.getName());
         res.setGender(user.getGender());
         res.setId(user.getId());
         res.setUpdatedAt(user.getUpdatedAt());
@@ -149,6 +149,11 @@ public class UserService {
             user.setRefreshToken(token);
             this.userRepository.save(user);
         }
+    }
+
+    public User getUserByRefreshTokenAndEmail(String token, String email) {
+        User user = this.userRepository.findByRefreshTokenAndEmail(token, email);
+        return user;
     }
 
 }
