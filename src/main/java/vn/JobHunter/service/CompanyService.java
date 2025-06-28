@@ -2,6 +2,7 @@ package vn.JobHunter.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -9,15 +10,20 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import vn.JobHunter.domain.Company;
+import vn.JobHunter.domain.User;
+import vn.JobHunter.domain.dto.CompanyDto;
 import vn.JobHunter.domain.respone.ResultPaginationDto;
 import vn.JobHunter.repository.CompanyRepository;
+import vn.JobHunter.repository.UserRepository;
 
 @Service
 public class CompanyService {
     private final CompanyRepository companyRepository;
+    private final UserRepository userRepository;
 
-    public CompanyService(CompanyRepository companyRepository) {
+    public CompanyService(CompanyRepository companyRepository, UserRepository userRepository) {
         this.companyRepository = companyRepository;
+        this.userRepository = userRepository;
     }
 
     public Company handleCreateCompany(Company company) {
@@ -46,7 +52,27 @@ public class CompanyService {
     }
 
     public void deleteCompany(Long id) {
+        List<User> users = userRepository.findByCompanyId(id);
+        this.userRepository.deleteAll(users);
+
         this.companyRepository.deleteById(id);
+    }
+
+    public CompanyDto convertCompanyToCompanyDto(Company c) {
+        CompanyDto companyDto = new CompanyDto();
+        companyDto.setAddress(c.getAddress());
+        companyDto.setName(c.getName());
+        companyDto.setCreatedBy(c.getCreatedBy());
+        companyDto.setCreatedDate(c.getCreatedDate());
+        companyDto.setId(c.getId());
+        companyDto.setDescription(c.getDescription());
+        return companyDto;
+
+    }
+
+    public List<User> getAllUserByCompany(Long id) {
+        List<User> users = this.userRepository.findByCompanyId(id);
+        return users;
     }
 
 }

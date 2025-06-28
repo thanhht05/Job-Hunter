@@ -16,7 +16,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import vn.JobHunter.domain.RestResponse;
+import vn.JobHunter.domain.respone.RestResponse;
 
 // @Component  switched into security config
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {

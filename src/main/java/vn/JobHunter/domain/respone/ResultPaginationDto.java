@@ -2,6 +2,7 @@ package vn.JobHunter.domain.respone;
 
 import lombok.Getter;
 import lombok.Setter;
+import vn.JobHunter.domain.Company;
 
 @Getter
 @Setter

@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import jakarta.persistence.EntityNotFoundException;
-import vn.JobHunter.domain.RestResponse;
+import vn.JobHunter.domain.respone.RestResponse;
 
 @RestControllerAdvice
 public class GlobalException {

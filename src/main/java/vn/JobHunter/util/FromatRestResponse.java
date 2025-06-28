@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 import jakarta.servlet.http.HttpServletResponse;
-import vn.JobHunter.domain.RestResponse;
+import vn.JobHunter.domain.respone.RestResponse;
 import vn.JobHunter.util.annotation.ApiMessage;
 
 @RestControllerAdvice
