@@ -64,4 +64,16 @@ public class GlobalException {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(res);
     }
 
+    @ExceptionHandler(value = {
+            SotorageExcpetion.class
+    })
+
+    public ResponseEntity<RestResponse<Object>> handleFileUploadException(Exception ex) {
+        RestResponse<Object> res = new RestResponse<>();
+        res.setStatusCode(HttpStatus.BAD_REQUEST.value());
+        res.setError(ex.getMessage());
+        res.setMessage("Exception uploadFile");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
+    }
+
 }
