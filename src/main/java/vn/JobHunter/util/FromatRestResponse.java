@@ -1,6 +1,7 @@
 package vn.JobHunter.util;
 
 import org.springframework.core.MethodParameter;
+import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
@@ -28,7 +29,7 @@ public class FromatRestResponse implements ResponseBodyAdvice {
         RestResponse<Object> fromatRestResponse = new RestResponse<>();
         fromatRestResponse.setStatusCode(statusCode);
 
-        if (body instanceof String) {
+        if (body instanceof String || body instanceof Resource) {
             return body;
         }
         if (statusCode >= 400) {
