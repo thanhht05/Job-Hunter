@@ -1,26 +1,20 @@
 package vn.JobHunter.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
-import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import jakarta.persistence.EntityNotFoundException;
 import vn.JobHunter.domain.Company;
 import vn.JobHunter.domain.User;
-import vn.JobHunter.domain.dto.UserDto;
-import vn.JobHunter.domain.respone.ResCreateUserDto;
-import vn.JobHunter.domain.respone.ResUpdateUserDto;
-import vn.JobHunter.domain.respone.ResponseUserDto;
 import vn.JobHunter.domain.respone.ResultPaginationDto;
+import vn.JobHunter.domain.respone.user.ResCreateUserDto;
+import vn.JobHunter.domain.respone.user.ResUpdateUserDto;
+import vn.JobHunter.domain.respone.user.ResponseUserDto;
 import vn.JobHunter.repository.UserRepository;
 
 @Service
@@ -195,16 +189,4 @@ public class UserService {
         User user = this.userRepository.findByRefreshTokenAndEmail(token, email);
         return user;
     }
-
-    public User convertUserDtoTOUser(UserDto userDto) {
-        User user = new User();
-        user.setAddress(userDto.getAddress());
-        user.setAge(userDto.getAge());
-        user.setEmail(userDto.getEmail());
-        user.setName(userDto.getName());
-        user.setGender(userDto.getGender());
-        user.setPassword(userDto.getPassword());
-        return user;
-    }
-
 }

@@ -1,20 +1,25 @@
-package vn.JobHunter.domain.respone;
+package vn.JobHunter.domain.respone.user;
 
 import java.time.Instant;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import vn.JobHunter.util.constant.GenderEnum;
 
 @Getter
 @Setter
-public class ResUpdateUserDto {
+@NoArgsConstructor
+@AllArgsConstructor
+public class ResCreateUserDto {
     private Long id;
-    private GenderEnum gender;
     private String name;
+    private String email;
+    private GenderEnum gender;
     private String address;
     private int age;
-    private Instant updatedAt;
+    private Instant createdDate;
     private CompanyUser company;
 
     @Getter
@@ -24,4 +29,5 @@ public class ResUpdateUserDto {
         private String name;
 
     }
+
 }

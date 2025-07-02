@@ -6,7 +6,6 @@ import com.turkraft.springfilter.boot.Filter;
 
 import jakarta.validation.Valid;
 import vn.JobHunter.domain.Company;
-import vn.JobHunter.domain.dto.CompanyDto;
 import vn.JobHunter.domain.respone.ResultPaginationDto;
 import vn.JobHunter.service.CompanyService;
 import vn.JobHunter.util.annotation.ApiMessage;
@@ -54,10 +53,9 @@ public class CompanyController {
 
     @GetMapping("/companies/{id}")
     @ApiMessage("Get company")
-    public ResponseEntity<CompanyDto> handleGetCompanyById(@PathVariable("id") Long id) {
+    public ResponseEntity<Company> handleGetCompanyById(@PathVariable("id") Long id) {
         Company c = this.companyService.fetchCompanyById(id);
-        CompanyDto companyDto = this.companyService.convertCompanyToCompanyDto(c);
-        return ResponseEntity.ok().body(companyDto);
+        return ResponseEntity.ok().body(c);
     }
 
     @PutMapping("/companies")

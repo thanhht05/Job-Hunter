@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import vn.JobHunter.domain.Company;
 import vn.JobHunter.domain.User;
-import vn.JobHunter.domain.dto.CompanyDto;
 import vn.JobHunter.domain.respone.ResultPaginationDto;
 import vn.JobHunter.repository.CompanyRepository;
 import vn.JobHunter.repository.UserRepository;
@@ -56,18 +55,6 @@ public class CompanyService {
         this.userRepository.deleteAll(users);
 
         this.companyRepository.deleteById(id);
-    }
-
-    public CompanyDto convertCompanyToCompanyDto(Company c) {
-        CompanyDto companyDto = new CompanyDto();
-        companyDto.setAddress(c.getAddress());
-        companyDto.setName(c.getName());
-        companyDto.setCreatedBy(c.getCreatedBy());
-        companyDto.setCreatedDate(c.getCreatedDate());
-        companyDto.setId(c.getId());
-        companyDto.setDescription(c.getDescription());
-        return companyDto;
-
     }
 
     public List<User> getAllUserByCompany(Long id) {

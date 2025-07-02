@@ -1,4 +1,4 @@
-package vn.JobHunter.domain.respone;
+package vn.JobHunter.domain.respone.user;
 
 import java.time.Instant;
 
@@ -6,13 +6,14 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import vn.JobHunter.domain.respone.user.ResCreateUserDto.CompanyUser;
 import vn.JobHunter.util.constant.GenderEnum;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
-public class ResCreateUserDto {
+@NoArgsConstructor
+public class ResponseUserDto {
     private Long id;
     private String name;
     private String email;
@@ -24,10 +25,11 @@ public class ResCreateUserDto {
 
     @Getter
     @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class CompanyUser {
         private Long id;
         private String name;
-
     }
 
 }

@@ -7,12 +7,11 @@ import com.turkraft.springfilter.boot.Filter;
 import jakarta.validation.Valid;
 import vn.JobHunter.domain.Company;
 import vn.JobHunter.domain.User;
-import vn.JobHunter.domain.dto.UserDto;
-import vn.JobHunter.domain.respone.ResCreateUserDto;
-import vn.JobHunter.domain.respone.ResUpdateUserDto;
-import vn.JobHunter.domain.respone.ResponseUserDto;
 import vn.JobHunter.domain.respone.RestResponse;
 import vn.JobHunter.domain.respone.ResultPaginationDto;
+import vn.JobHunter.domain.respone.user.ResCreateUserDto;
+import vn.JobHunter.domain.respone.user.ResUpdateUserDto;
+import vn.JobHunter.domain.respone.user.ResponseUserDto;
 import vn.JobHunter.service.CompanyService;
 import vn.JobHunter.service.UserService;
 import vn.JobHunter.util.annotation.ApiMessage;
@@ -36,12 +35,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 public class UserController {
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
-    private final CompanyService companyService;
 
-    public UserController(UserService userService, PasswordEncoder passwordEncoder, CompanyService companyService) {
+    public UserController(UserService userService, PasswordEncoder passwordEncoder) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
-        this.companyService = companyService;
     }
 
     @PostMapping("/users")
@@ -49,7 +46,6 @@ public class UserController {
     public ResponseEntity<ResCreateUserDto> handleCreateUser(@Valid @RequestBody User user)
             throws IdInvalidException {
         boolean checkEmail = userService.checkExistsByEmail(user.getEmail());
-        Company c = this.companyService.fetchCompanyById(user.getCompany().getId());
 
         if (checkEmail) {
             throw new IdInvalidException("Email " + user.getEmail() + " đã tồn tại trong hệ thống");
@@ -70,7 +66,7 @@ public class UserController {
             throw new IdInvalidException("User với id " + id + " không tồn tại trong hệ thống");
         }
         this.userService.handleDeleteUser(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().body(null);
     }
 
     @GetMapping("/users/{id}")
