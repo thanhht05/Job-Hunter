@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import vn.JobHunter.domain.Company;
 import vn.JobHunter.domain.Job;
 import vn.JobHunter.domain.Skill;
 import vn.JobHunter.domain.respone.ResultPaginationDto;
@@ -18,18 +19,25 @@ import vn.JobHunter.domain.respone.job.ResCreateJobDto;
 import vn.JobHunter.domain.respone.job.ResUpdateJobDto;
 import vn.JobHunter.repository.JobRepository;
 import vn.JobHunter.repository.SkillRepository;
+import vn.JobHunter.util.exception.IdInvalidException;
 
 @Service
 public class JobService {
     private final JobRepository jobRepository;
     private final SkillRepository skillRepository;
+    private final CompanyService companyService;
 
-    public JobService(JobRepository jobRepository, SkillRepository skillRepository) {
+    public JobService(JobRepository jobRepository, SkillRepository skillRepository, CompanyService companyService) {
         this.jobRepository = jobRepository;
         this.skillRepository = skillRepository;
+        this.companyService = companyService;
     }
 
-    public ResCreateJobDto createJob(Job job) {
+    public ResCreateJobDto createJob(Job job) throws IdInvalidException {
+        Company c = this.companyService.fetchCompanyById(job.getCompany().getId());
+        if (c == null) {
+            throw new IdInvalidException("Company not found");
+        }
         // check skill
         if (job.getSkills() != null) {
             List<Long> reqSkills = job.getSkills()
@@ -39,6 +47,7 @@ public class JobService {
             List<Skill> dbSkills = this.skillRepository.findByIdIn(reqSkills);
             job.setSkills(dbSkills);
         }
+        job.setCompany(c);
 
         // or
         // if(job.getSkills()!=null){

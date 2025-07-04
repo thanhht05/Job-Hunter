@@ -35,7 +35,7 @@ public class JobController {
     }
 
     @PostMapping("/jobs")
-    public ResponseEntity<ResCreateJobDto> handleCreateJob(@RequestBody Job job) {
+    public ResponseEntity<ResCreateJobDto> handleCreateJob(@RequestBody Job job) throws IdInvalidException {
 
         ResCreateJobDto curJob = this.jobService.createJob(job);
         return ResponseEntity.ok().body(curJob);

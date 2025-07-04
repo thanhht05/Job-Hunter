@@ -1,23 +1,15 @@
 package vn.JobHunter.domain;
 
-import java.sql.Date;
 import java.time.Instant;
-import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import jakarta.annotation.Generated;
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
@@ -25,40 +17,34 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 import vn.JobHunter.util.SecurityUtil;
-import vn.JobHunter.util.constant.GenderEnum;
+import vn.JobHunter.util.constant.StatusEnum;
 
-@Entity
-@Table(name = "users")
 @Getter
 @Setter
-public class User {
+@Entity
+@Table(name = "resumes")
+public class Resume {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-    private String name;
-    @NotBlank(message = "Email không được để trống")
+    private Long id;
+    @NotBlank(message = "Email khong duoc de trong")
     private String email;
-    @NotBlank(message = "Password không được để trống")
-
-    private String password;
-    private int age;
-    private String address;
-
-    @Enumerated(EnumType.STRING)
-    private GenderEnum gender;
-    @Column(columnDefinition = "MEDIUMTEXT")
-    private String refreshToken;
-    private String createdBy;
-    private String updatedBy;
+    @NotBlank(message = "url khong de trong")
+    private String url;
     private Instant createdDate;
     private Instant updatedAt;
-    @ManyToOne
-    @JoinColumn(name = "company_id")
-    private Company company;
+    private String createdBy;
+    private String updatedBy;
+    @Enumerated(EnumType.STRING)
+    private StatusEnum status;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    @JsonIgnore
-    private List<Resume> resumes;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "job_id")
+    private Job job;
 
     @PrePersist
     public void handleBeforeCreated() {
