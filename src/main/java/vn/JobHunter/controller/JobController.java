@@ -42,7 +42,7 @@ public class JobController {
     }
 
     @PutMapping("/jobs")
-    public ResponseEntity<ResUpdateJobDto> updateJob(@RequestBody Job job) {
+    public ResponseEntity<ResUpdateJobDto> updateJob(@RequestBody Job job) throws IdInvalidException {
 
         ResUpdateJobDto res = this.jobService.handleUpdateJob(job);
         return ResponseEntity.ok().body(res);

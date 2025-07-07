@@ -82,23 +82,27 @@ public class JobService {
         return res;
     }
 
-    public ResUpdateJobDto handleUpdateJob(Job j) {
-        // check skill
+    public ResUpdateJobDto handleUpdateJob(Job j) throws IdInvalidException {
+        Job existingJob = jobRepository.findById(j.getId())
+                .orElseThrow(() -> new IdInvalidException("Job not found"));
+
+        j.setCreatedBy(existingJob.getCreatedBy());
+        j.setCreatedDate(existingJob.getCreatedDate());
+
         if (j.getSkills() != null) {
             List<Long> reqSkills = j.getSkills()
-                    .stream().map(x -> x.getId())
+                    .stream().map(Skill::getId)
                     .collect(Collectors.toList());
             List<Skill> dbSkills = this.skillRepository.findByIdIn(reqSkills);
             j.setSkills(dbSkills);
         }
 
-        // update job
         Job curJob = this.jobRepository.save(j);
-        // convet respone
+
         ResUpdateJobDto res = new ResUpdateJobDto();
-        res.setLevel(curJob.getLevel());
         res.setId(curJob.getId());
         res.setName(curJob.getName());
+        res.setLevel(curJob.getLevel());
         res.setIsActive(curJob.isActive());
         res.setQuantity(curJob.getQuantity());
         res.setSalary(curJob.getSalary());
@@ -108,12 +112,12 @@ public class JobService {
 
         if (curJob.getSkills() != null) {
             List<String> skillList = curJob.getSkills()
-                    .stream().map(item -> item.getName())
+                    .stream().map(Skill::getName)
                     .collect(Collectors.toList());
             res.setSkills(skillList);
         }
-        return res;
 
+        return res;
     }
 
     public Job fetchJobById(Long id) {

@@ -60,16 +60,8 @@ public class CompanyController {
 
     @PutMapping("/companies")
     @ApiMessage("Update company")
-    public ResponseEntity<Company> handleUpdateCompany(@RequestBody Company c) {
-        Company company = this.companyService.fetchCompanyById(c.getId());
-        if (company != null) {
-            company.setAddress(c.getAddress());
-            company.setName(c.getName());
-            company.setDescription(c.getDescription());
-            company.setLogo(c.getName());
-            company = this.companyService.handleCreateCompany(company);
-        }
-
+    public ResponseEntity<Company> handleUpdateCompany(@RequestBody Company c) throws IdInvalidException {
+        Company company = this.companyService.handleUpdateCompany(c);
         return ResponseEntity.ok().body(company);
     }
 

@@ -14,6 +14,7 @@ import vn.JobHunter.domain.User;
 import vn.JobHunter.domain.respone.ResultPaginationDto;
 import vn.JobHunter.repository.CompanyRepository;
 import vn.JobHunter.repository.UserRepository;
+import vn.JobHunter.util.exception.IdInvalidException;
 
 @Service
 public class CompanyService {
@@ -60,6 +61,19 @@ public class CompanyService {
     public List<User> getAllUserByCompany(Long id) {
         List<User> users = this.userRepository.findByCompanyId(id);
         return users;
+    }
+
+    public Company handleUpdateCompany(Company c) throws IdInvalidException {
+        Company company = this.fetchCompanyById(c.getId());
+        if (company == null) {
+            throw new IdInvalidException("Company is not found");
+        }
+        company.setAddress(c.getAddress());
+        company.setName(c.getName());
+        company.setLogo(c.getLogo());
+        company.setDescription(c.getDescription());
+        this.handleCreateCompany(company);
+        return company;
     }
 
 }

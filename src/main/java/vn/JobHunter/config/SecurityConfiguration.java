@@ -49,7 +49,7 @@ public class SecurityConfiguration {
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers(whiteList).permitAll()
-                        .anyRequest().permitAll()
+                        .anyRequest().authenticated()
 
                 )
 
