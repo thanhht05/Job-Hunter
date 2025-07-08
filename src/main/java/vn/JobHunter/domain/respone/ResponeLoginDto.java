@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import vn.JobHunter.domain.Role;
 
 @Getter
 @Setter
@@ -21,7 +22,8 @@ public class ResponeLoginDto {
     public static class UserLogin {
         private Long id;
         private String email;
-        private String fullName;
+        private String name;
+        private Role role;
 
     }
 
@@ -31,6 +33,17 @@ public class ResponeLoginDto {
     @AllArgsConstructor
     public static class UserGetAccount {
         private UserLogin user;
+
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class UserInsideToken {
+        private Long id;
+        private String email;
+        private String name;
 
     }
 

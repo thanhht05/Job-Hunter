@@ -60,4 +60,9 @@ public class RoleController {
         return ResponseEntity.ok().body(null);
     }
 
+    @GetMapping("/roles/{id}")
+    public ResponseEntity<Role> getRoleById(@PathVariable("id") Long id) throws IdInvalidException {
+        return ResponseEntity.ok().body(this.roleService.fetchRoleById(id));
+    }
+
 }

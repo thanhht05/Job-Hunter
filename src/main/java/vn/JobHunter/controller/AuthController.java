@@ -8,6 +8,7 @@ import vn.JobHunter.domain.User;
 import vn.JobHunter.domain.request.ReqLoginDto;
 import vn.JobHunter.domain.respone.ResponeLoginDto;
 import vn.JobHunter.domain.respone.ResponeLoginDto.UserLogin;
+import vn.JobHunter.domain.respone.user.ResponseUserDto;
 import vn.JobHunter.service.UserService;
 import vn.JobHunter.util.SecurityUtil;
 import vn.JobHunter.util.annotation.ApiMessage;
@@ -16,10 +17,8 @@ import vn.JobHunter.util.exception.IdInvalidException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.server.reactive.HttpHeadResponseDecorator;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -31,7 +30,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -39,15 +37,17 @@ public class AuthController {
         private final UserService userService;
         private final AuthenticationManagerBuilder authenticationManagerBuilder;
         private final SecurityUtil securityUtil;
+        private final PasswordEncoder passwordEncoder;
 
         @Value("${jwt.refresh-token-validity-in-seconds}")
         private long refreshTokenExpiration;
 
         public AuthController(AuthenticationManagerBuilder authenticationManagerBuilder,
-                        SecurityUtil securityUtil, UserService userService) {
+                        SecurityUtil securityUtil, UserService userService, PasswordEncoder passwordEncoder) {
                 this.authenticationManagerBuilder = authenticationManagerBuilder;
                 this.securityUtil = securityUtil;
                 this.userService = userService;
+                this.passwordEncoder = passwordEncoder;
         }
 
         @PostMapping("/auth/login")
@@ -64,18 +64,19 @@ public class AuthController {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
 
                 // set result login
-                ResponeLoginDto responeLoginDto = new ResponeLoginDto();
                 User curUser = this.userService.fetchUserByUsername(uDto.getUsername());
-                ResponeLoginDto.UserLogin userLogin = new ResponeLoginDto.UserLogin(curUser.getId(), curUser.getEmail(),
-                                curUser.getName());
+                ResponeLoginDto res = new ResponeLoginDto();
+                ResponeLoginDto.UserLogin userLogin = new ResponeLoginDto.UserLogin(
+                                curUser.getId(), curUser.getEmail(),
+                                curUser.getName(), curUser.getRole());
 
+                res.setUser(userLogin);
                 // create access token
-                String accessToken = this.securityUtil.createAccessToken(authentication.getName(), userLogin);
-                responeLoginDto.setAccessToken(accessToken);
-                responeLoginDto.setUser(userLogin);
+                String accessToken = this.securityUtil.createAccessToken(authentication.getName(), res);
+                res.setAccessToken(accessToken);
 
                 // create refresh token
-                String refreshToke = this.securityUtil.createRefreshToken(uDto.getUsername(), responeLoginDto);
+                String refreshToke = this.securityUtil.createRefreshToken(uDto.getUsername(), res);
                 // update user
                 this.userService.updateUserToken(refreshToke, uDto.getUsername());
 
@@ -90,7 +91,7 @@ public class AuthController {
 
                 return ResponseEntity.ok()
                                 .header(HttpHeaders.SET_COOKIE, responseCookie.toString())
-                                .body(responeLoginDto);
+                                .body(res);
 
         }
 
@@ -106,7 +107,7 @@ public class AuthController {
                 ResponeLoginDto.UserGetAccount userGetAccount = new ResponeLoginDto.UserGetAccount();
 
                 ResponeLoginDto.UserLogin userLogin = new UserLogin(userDb.getId(), userDb.getEmail(),
-                                userDb.getName());
+                                userDb.getName(), userDb.getRole());
 
                 userGetAccount.setUser(userLogin);
                 return ResponseEntity.ok().body(userGetAccount);
@@ -131,15 +132,15 @@ public class AuthController {
                 }
 
                 // issue new token
-                ResponeLoginDto responeLoginDto = new ResponeLoginDto();
+                ResponeLoginDto res = new ResponeLoginDto();
                 ResponeLoginDto.UserLogin userLogin = new ResponeLoginDto.UserLogin(curUser.getId(), curUser.getEmail(),
-                                curUser.getName());
-                String accessToken = this.securityUtil.createAccessToken(email, userLogin);
-                responeLoginDto.setUser(userLogin);
-                responeLoginDto.setAccessToken(accessToken);
+                                curUser.getName(), curUser.getRole());
+                res.setUser(userLogin);
+                String accessToken = this.securityUtil.createAccessToken(email, res);
+                res.setAccessToken(accessToken);
 
                 // create refresh token
-                String newRefreshToken = this.securityUtil.createRefreshToken(email, responeLoginDto);
+                String newRefreshToken = this.securityUtil.createRefreshToken(email, res);
                 // update user
                 this.userService.updateUserToken(newRefreshToken, email);
 
@@ -154,7 +155,7 @@ public class AuthController {
 
                 return ResponseEntity.ok()
                                 .header(HttpHeaders.SET_COOKIE, responseCookie.toString())
-                                .body(responeLoginDto);
+                                .body(res);
         }
 
         @PostMapping("/auth/logout")
@@ -183,4 +184,18 @@ public class AuthController {
                                 .body(null);
 
         }
+
+        @PostMapping("/auth/register")
+        @ApiMessage("Register new user")
+        public ResponseEntity<ResponseUserDto> register(@Valid @RequestBody User user) throws IdInvalidException {
+                boolean checkExistsByEmail = this.userService.checkExistsByEmail(user.getEmail());
+                if (checkExistsByEmail) {
+                        throw new IdInvalidException("Email da ton tai");
+                }
+                String hashPass = this.passwordEncoder.encode(user.getPassword());
+                user.setPassword(hashPass);
+
+                return ResponseEntity.status(HttpStatus.CREATED).body(this.userService.createUser(user));
+        }
+
 }

@@ -5,14 +5,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.turkraft.springfilter.boot.Filter;
 
 import jakarta.validation.Valid;
-import vn.JobHunter.domain.Company;
 import vn.JobHunter.domain.User;
-import vn.JobHunter.domain.respone.RestResponse;
 import vn.JobHunter.domain.respone.ResultPaginationDto;
-import vn.JobHunter.domain.respone.user.ResCreateUserDto;
-import vn.JobHunter.domain.respone.user.ResUpdateUserDto;
 import vn.JobHunter.domain.respone.user.ResponseUserDto;
-import vn.JobHunter.service.CompanyService;
 import vn.JobHunter.service.UserService;
 import vn.JobHunter.util.annotation.ApiMessage;
 import vn.JobHunter.util.exception.IdInvalidException;
@@ -44,7 +39,7 @@ public class UserController {
 
     @PostMapping("/users")
     @ApiMessage("Create a new user")
-    public ResponseEntity<ResCreateUserDto> handleCreateUser(@Valid @RequestBody User user)
+    public ResponseEntity<ResponseUserDto> handleCreateUser(@Valid @RequestBody User user)
             throws IdInvalidException {
         boolean checkEmail = userService.checkExistsByEmail(user.getEmail());
 
@@ -54,9 +49,7 @@ public class UserController {
         String hashPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(hashPassword);
 
-        User userCreate = this.userService.SaveUser(user);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(this.userService.convertUserToUserCreateDto(userCreate));
+        return ResponseEntity.status(HttpStatus.CREATED).body(this.userService.createUser(user));
     }
 
     @DeleteMapping("/users/{id}")
@@ -71,7 +64,7 @@ public class UserController {
     }
 
     @GetMapping("/users/{id}")
-    public ResponseEntity<ResCreateUserDto> handleGetUserById(@PathVariable("id") Long id)
+    public ResponseEntity<ResponseUserDto> handleGetUserById(@PathVariable("id") Long id)
             throws IdInvalidException {
         User user = this.userService.handleFetchUserById(id);
         if (user == null) {
@@ -91,7 +84,7 @@ public class UserController {
 
     @PutMapping("/users")
     @ApiMessage("Update a user")
-    public ResponseEntity<ResUpdateUserDto> handleUpdateUser(@RequestBody User user)
+    public ResponseEntity<ResponseUserDto> handleUpdateUser(@RequestBody User user)
             throws IdInvalidException {
         User userUpdate = this.userService.handleUpdateUser(user);
         if (userUpdate == null) {
@@ -100,7 +93,7 @@ public class UserController {
         }
         this.userService.handleUpdateUser(userUpdate);
 
-        return ResponseEntity.status(HttpStatus.OK).body(this.userService.convertUserToResUpdateUserDto(userUpdate));
+        return ResponseEntity.status(HttpStatus.OK).body(this.userService.convertUserToResUserDto(userUpdate));
     }
 
 }

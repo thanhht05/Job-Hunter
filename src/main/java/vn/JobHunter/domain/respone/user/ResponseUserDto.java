@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import vn.JobHunter.domain.respone.user.ResCreateUserDto.CompanyUser;
 import vn.JobHunter.util.constant.GenderEnum;
 
 @Getter
@@ -22,6 +21,7 @@ public class ResponseUserDto {
     private int age;
     private Instant createdDate;
     private CompanyUser company;
+    private RoleUser role;
 
     @Getter
     @Setter
@@ -30,6 +30,14 @@ public class ResponseUserDto {
     public static class CompanyUser {
         private Long id;
         private String name;
+    }
+
+    @Getter
+    @Setter
+    public static class RoleUser {
+        private Long id;
+        private String name;
+
     }
 
 }

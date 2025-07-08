@@ -29,6 +29,7 @@ import com.nimbusds.jose.util.Base64;
 
 import vn.JobHunter.config.SecurityConfiguration;
 import vn.JobHunter.domain.respone.ResponeLoginDto;
+import vn.JobHunter.domain.respone.ResponeLoginDto.UserInsideToken;
 
 @Service
 public class SecurityUtil {
@@ -66,8 +67,11 @@ public class SecurityUtil {
 
     };
 
-    public String createAccessToken(String email, ResponeLoginDto.UserLogin res) {
-
+    public String createAccessToken(String email, ResponeLoginDto res) {
+        ResponeLoginDto.UserInsideToken userToken = new UserInsideToken();
+        userToken.setId(res.getUser().getId());
+        userToken.setEmail(res.getUser().getEmail());
+        userToken.setName(res.getUser().getName());
         List<String> listAuthority = new ArrayList<>();
         listAuthority.add("ROLE_USER_CREATE");
         listAuthority.add("ROLE_USER_UPDATE");
@@ -80,7 +84,7 @@ public class SecurityUtil {
                 .issuedAt(now)
                 .expiresAt(validity)
                 .subject(email)
-                .claim("user", res)
+                .claim("user", userToken)
                 .claim("permission", listAuthority)
                 .build();
     
@@ -89,6 +93,11 @@ public class SecurityUtil {
     }
 
         public String createRefreshToken(String email, ResponeLoginDto res) {
+            ResponeLoginDto.UserInsideToken userToken=new UserInsideToken();
+            userToken.setId(res.getUser().getId());
+            userToken.setEmail(res.getUser().getEmail());
+            userToken.setName(res.getUser().getName());
+
         Instant now = Instant.now();
         Instant validity = now.plus(this.refreshTokenExpiration, ChronoUnit.SECONDS);
 
@@ -97,7 +106,7 @@ public class SecurityUtil {
                 .issuedAt(now)
                 .expiresAt(validity)
                 .subject(email)
-                .claim("user", res.getUser())
+                .claim("user", userToken)
                 .build();
     
             JwsHeader jwsHeader = JwsHeader.with(JWT_ALGORITHM).build();

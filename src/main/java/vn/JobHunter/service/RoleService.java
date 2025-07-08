@@ -28,6 +28,14 @@ public class RoleService {
         this.permissionRepository = permissionRepository;
     }
 
+    public Role fetchRoleById(Long id) throws IdInvalidException {
+        Optional<Role> roleOptional = this.roleRepository.findById(id);
+        if (roleOptional.isEmpty()) {
+            throw new IdInvalidException("Role khong ton tai");
+        }
+        return roleOptional.get();
+    }
+
     public ResCreateRoleDto createRole(Role role) throws IdInvalidException {
         if (this.roleRepository.existsByName(role.getName())) {
             throw new IdInvalidException("Role da ton tai");
@@ -72,6 +80,7 @@ public class RoleService {
         cuRole.setActive(role.isActive());
         cuRole.setName(role.getName());
         cuRole.setDescription(role.getDescription());
+        cuRole.setPermissions(role.getPermissions());
 
         return this.roleRepository.save(cuRole);
 

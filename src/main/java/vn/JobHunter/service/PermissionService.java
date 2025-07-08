@@ -39,16 +39,30 @@ public class PermissionService {
         return p.get();
     }
 
+    public boolean isSameName(Permission p) throws IdInvalidException {
+        Permission permissionDb = this.fetchPermissionById(p.getId());
+        if (permissionDb != null) {
+            if (permissionDb.getName().equals(p.getName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public Permission updatePermission(Permission permission) throws IdInvalidException {
         if (this.permissionRepository.existsByModuleAndApiPathAndMethod(permission.getModule(), permission.getApiPath(),
                 permission.getMethod())) {
-            throw new IdInvalidException("Permission da ton tai");
+
+            if (this.isSameName(permission)) {
+                throw new IdInvalidException("Permission da ton tai 111");
+            }
+
         }
         Permission p = this.fetchPermissionById(permission.getId());
         p.setApiPath(permission.getApiPath());
         p.setName(permission.getName());
         p.setMethod(permission.getMethod());
-        return this.createPermission(permission);
+        return this.permissionRepository.save(p);
     }
 
     public ResultPaginationDto getAllPermission(Specification<Permission> spec, Pageable pageable) {

@@ -3,11 +3,19 @@ package vn.JobHunter.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+
+import com.turkraft.springfilter.converter.FilterSpecification;
+import com.turkraft.springfilter.converter.FilterSpecificationConverter;
+import com.turkraft.springfilter.parser.FilterParser;
+import com.turkraft.springfilter.parser.node.FilterNode;
 
 import vn.JobHunter.domain.Job;
 import vn.JobHunter.domain.Resume;
@@ -17,6 +25,7 @@ import vn.JobHunter.domain.respone.resume.ResCreateResumeDto;
 import vn.JobHunter.domain.respone.resume.ResResumeDto;
 import vn.JobHunter.domain.respone.resume.ResUpdateResume;
 import vn.JobHunter.repository.ResumeRepository;
+import vn.JobHunter.util.SecurityUtil;
 import vn.JobHunter.util.exception.IdInvalidException;
 
 @Service
@@ -24,6 +33,11 @@ public class ResumeService {
     private final ResumeRepository resumeRepository;
     private final JobService jobService;
     private final UserService userService;
+    @Autowired
+    private FilterParser filterParser;
+
+    @Autowired
+    private FilterSpecificationConverter filterSpecificationConverter;
 
     public ResumeService(ResumeRepository resumeRepository, JobService jobService, UserService userService) {
         this.resumeRepository = resumeRepository;
@@ -93,7 +107,9 @@ public class ResumeService {
         res.setCreatedDate(resume.getCreatedDate());
         res.setStatus(resume.getStatus());
         res.setUpdatedAt(resume.getUpdatedAt());
-        res.setUpdatedBy(res.getUpdatedBy());
+        res.setUpdatedBy(resume.getUpdatedBy());
+
+        res.setCompanyName(resume.getJob().getCompany() != null ? resume.getJob().getCompany().getName() : null);
 
         job.setId(resume.getJob().getId());
         job.setName(resume.getJob().getName());
@@ -125,6 +141,32 @@ public class ResumeService {
         }
         res.setResult(resResumeDtos);
 
+        return res;
+    }
+
+    public ResultPaginationDto getResumeByUser(Pageable pageable) {
+        // query builder
+        String email = SecurityUtil.getCurrentUserLogin().orElse("");
+        FilterNode node = filterParser.parse("user.email='" + email + "'");
+        FilterSpecification<Resume> spec = filterSpecificationConverter.convert(node);
+        Page<Resume> resumePage = this.resumeRepository.findAll(spec, pageable);
+
+        ResultPaginationDto res = new ResultPaginationDto();
+        ResultPaginationDto.Meta meta = new ResultPaginationDto.Meta();
+
+        meta.setPage(pageable.getPageNumber() + 1);
+        meta.setPageSize(pageable.getPageSize());
+
+        meta.setTotalElements(resumePage.getTotalElements());
+        meta.setPages(resumePage.getTotalPages());
+
+        res.setMeta(meta);
+
+        List<ResResumeDto> resumeDtoList = resumePage.getContent().stream()
+                .map(r -> this.convertResumeToResResumeDto(r))
+                .collect(Collectors.toList());
+
+        res.setResult(resumeDtoList);
         return res;
     }
 }

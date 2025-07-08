@@ -12,5 +12,7 @@ import vn.JobHunter.domain.Permission;
 public interface PermissionRepository extends JpaRepository<Permission, Long>, JpaSpecificationExecutor<Permission> {
     boolean existsByModuleAndApiPathAndMethod(String module, String apiPath, String method);
 
+    boolean existsByName(String name);
+
     List<Permission> findByIdIn(List<Long> permissions);
 }
