@@ -179,7 +179,7 @@ public class AuthController {
                                 .maxAge(0)
                                 .build();
 
-                return ResponseEntity.status(HttpStatus.CREATED)
+                return ResponseEntity.ok()
                                 .header(HttpHeaders.SET_COOKIE, deleteCookie.toString())
                                 .body(null);
 

@@ -1,7 +1,10 @@
 package vn.JobHunter.service;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -80,7 +83,16 @@ public class RoleService {
         cuRole.setActive(role.isActive());
         cuRole.setName(role.getName());
         cuRole.setDescription(role.getDescription());
-        cuRole.setPermissions(role.getPermissions());
+
+        Set<Permission> setPermissions = new HashSet<>(roleOptional.get().getPermissions());
+        if (role.getPermissions() != null) {
+            for (Permission p : role.getPermissions()) {
+                setPermissions.add(p);
+            }
+        }
+        List<Permission> permissions = new ArrayList<>();
+        permissions.addAll(setPermissions);
+        cuRole.setPermissions(permissions);
 
         return this.roleRepository.save(cuRole);
 

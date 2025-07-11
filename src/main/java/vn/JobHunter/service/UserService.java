@@ -60,15 +60,20 @@ public class UserService {
             curUser.setAge(user.getAge());
             curUser.setCompany(user.getCompany());
 
-            if (user.getCompany() != null) {
-                Company c = this.companyService.fetchCompanyById(curUser.getCompany().getId());
+            if (user.getCompany() != null && user.getCompany().getId() != null) {
+                Company c = companyService.fetchCompanyById(user.getCompany().getId());
                 curUser.setCompany(c);
+            } else {
+                curUser.setCompany(curUser.getCompany()); // giữ nguyên
             }
-            if (user.getRole() != null) {
+
+            if (user.getRole() != null && user.getRole().getId() != null) {
                 Role role = this.roleService.fetchRoleById(user.getRole().getId());
                 curUser.setRole(role != null ? role : null);
+            } else {
+
+                curUser = this.userRepository.save(curUser);
             }
-            curUser = this.userRepository.save(curUser);
         }
         return curUser;
     }
