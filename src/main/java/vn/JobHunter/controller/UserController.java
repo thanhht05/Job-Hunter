@@ -85,14 +85,9 @@ public class UserController {
     @ApiMessage("Update a user")
     public ResponseEntity<ResponseUserDto> handleUpdateUser(@RequestBody User user)
             throws IdInvalidException {
-        User userUpdate = this.userService.handleUpdateUser(user);
-        if (userUpdate == null) {
-            throw new IdInvalidException("User  không tồn tại trong hệ thống");
+        this.userService.handleUpdateUser(user);
 
-        }
-        this.userService.handleUpdateUser(userUpdate);
-
-        return ResponseEntity.status(HttpStatus.OK).body(this.userService.convertUserToResUserDto(userUpdate));
+        return ResponseEntity.status(HttpStatus.OK).body(this.userService.handleUpdateUser(user));
     }
 
 }

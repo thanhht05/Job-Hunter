@@ -51,7 +51,7 @@ public class UserService {
         this.userRepository.deleteById(id);
     }
 
-    public User handleUpdateUser(User user) throws IdInvalidException {
+    public ResponseUserDto handleUpdateUser(User user) throws IdInvalidException {
         User curUser = handleFetchUserById(user.getId());
         if (curUser != null) {
             curUser.setName(user.getName());
@@ -75,7 +75,9 @@ public class UserService {
                 curUser = this.userRepository.save(curUser);
             }
         }
-        return curUser;
+        curUser = this.userRepository.save(curUser);
+        curUser = this.userRepository.save(curUser);
+        return convertUserToResUserDto(curUser);
     }
 
     public User handleFetchUserById(Long id) {
