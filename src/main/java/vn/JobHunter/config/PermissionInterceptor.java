@@ -15,6 +15,7 @@ import vn.JobHunter.domain.User;
 import vn.JobHunter.service.UserService;
 import vn.JobHunter.util.SecurityUtil;
 import vn.JobHunter.util.exception.IdInvalidException;
+import vn.JobHunter.util.exception.PermissionExcepeion;
 
 public class PermissionInterceptor implements HandlerInterceptor {
     @Autowired
@@ -47,10 +48,10 @@ public class PermissionInterceptor implements HandlerInterceptor {
                     boolean isAllow = permissions.stream()
                             .anyMatch(item -> item.getApiPath().equals(path) && item.getMethod().equals(httpMethod));
                     if (isAllow == false) {
-                        throw new IdInvalidException("Ban khong co quyen truy cap");
+                        throw new PermissionExcepeion("Ban khong co quyen truy cap");
                     }
                 } else {
-                    throw new IdInvalidException("Ban khong co quyen truy cap");
+                    throw new PermissionExcepeion("Ban khong co quyen truy cap");
 
                 }
             }
