@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import vn.JobHunter.domain.Job;
 import vn.JobHunter.domain.Skill;
+import vn.JobHunter.domain.Subscriber;
 import vn.JobHunter.domain.respone.ResultPaginationDto;
 import vn.JobHunter.repository.SkillRepository;
 
@@ -69,19 +70,21 @@ public class SkillService {
         // }
 
         if (skill != null) {
-            List<Job> jobs = skill.getJobs();
+            // List<Job> jobs = skill.getJobs();
 
-            for (Job iJob : jobs) {
-                List<Skill> jobSkills = iJob.getSkills();
+            // for (Job iJob : jobs) {
+            // List<Skill> jobSkills = iJob.getSkills();
 
-                for (int i = 0; i < jobSkills.size(); i++) {
-                    Skill s = jobSkills.get(i);
-                    if (s != null && s.getId() == id) {
-                        jobSkills.remove(i);
-                        i--;
-                    }
-                }
-            }
+            // for (int i = 0; i < jobSkills.size(); i++) {
+            // Skill s = jobSkills.get(i);
+            // if (s != null && s.getId() == id) {
+            // jobSkills.remove(i);
+            // i--;
+            // }
+            // }
+            // }
+            skill.getSubscribers().forEach(subs -> subs.getSkills().remove(skill));
+            skill.getJobs().forEach(job -> job.getSkills().remove(skill));
             this.skillRepository.delete(skill);
         }
     }

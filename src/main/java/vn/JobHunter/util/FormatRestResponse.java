@@ -14,7 +14,7 @@ import vn.JobHunter.domain.respone.RestResponse;
 import vn.JobHunter.util.annotation.ApiMessage;
 
 @RestControllerAdvice
-public class FromatRestResponse implements ResponseBodyAdvice {
+public class FormatRestResponse implements ResponseBodyAdvice {
 
     @Override
     public boolean supports(MethodParameter returnType, Class converterType) {
@@ -28,7 +28,10 @@ public class FromatRestResponse implements ResponseBodyAdvice {
 
         RestResponse<Object> fromatRestResponse = new RestResponse<>();
         fromatRestResponse.setStatusCode(statusCode);
-
+        String path = request.getURI().getPath();
+        if (path.startsWith("/v3/api-docs") || path.startsWith("/swagger-ui")) {
+            return body;
+        }
         if (body instanceof String || body instanceof Resource) {
             return body;
         }
