@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -22,6 +25,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final CompanyService companyService;
     private final RoleService roleService;
+    private  static  final Logger log= LoggerFactory.getLogger(UserService.class);
 
     public UserService(UserRepository userRepository, CompanyService companyService, RoleService roleService) {
         this.userRepository = userRepository;
@@ -33,7 +37,7 @@ public class UserService {
         // check role
         if (user.getRole() != null) {
             Role r = this.roleService.fetchRoleById(user.getRole().getId());
-            user.setRole(r != null ? r : null);
+            user.setRole(r!=null ? r : null);
         }
 
         // check company
@@ -43,6 +47,7 @@ public class UserService {
             user.setCompany(company);
         }
         User userCreate = this.userRepository.save(user);
+        log.info("Create user with id: {}" , user.getId());
 
         return this.convertUserToResUserDto(userCreate);
     }

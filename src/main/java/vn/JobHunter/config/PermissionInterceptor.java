@@ -11,10 +11,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import vn.JobHunter.domain.Permission;
 import vn.JobHunter.domain.Role;
+
 import vn.JobHunter.domain.User;
 import vn.JobHunter.service.UserService;
 import vn.JobHunter.util.SecurityUtil;
-import vn.JobHunter.util.exception.IdInvalidException;
 import vn.JobHunter.util.exception.PermissionExcepeion;
 
 public class PermissionInterceptor implements HandlerInterceptor {
@@ -38,7 +38,7 @@ public class PermissionInterceptor implements HandlerInterceptor {
         // check role - permission
         String email = SecurityUtil.getCurrentUserLogin().isPresent() ? SecurityUtil.getCurrentUserLogin().get()
                 : "";
-        if (email != null && !email.isEmpty()) {
+        if (!email.isEmpty()) {
             User user = this.userService.fetchUserByUsername(email);
             if (user != null) {
                 Role role = user.getRole();
@@ -47,7 +47,7 @@ public class PermissionInterceptor implements HandlerInterceptor {
 
                     boolean isAllow = permissions.stream()
                             .anyMatch(item -> item.getApiPath().equals(path) && item.getMethod().equals(httpMethod));
-                    if (isAllow == false) {
+                    if (!isAllow) {
                         throw new PermissionExcepeion("Ban khong co quyen truy cap");
                     }
                 } else {
