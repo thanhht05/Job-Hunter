@@ -39,26 +39,26 @@ public class JobService {
             throw new IdInvalidException("Company not found");
         }
         // check skill
-        if (job.getSkills() != null) {
-            List<Long> reqSkills = job.getSkills()
-                    .stream().map(x -> x.getId())
-                    .collect(Collectors.toList());
+        // if (job.getSkills() != null) {
+        // List<Long> reqSkills = job.getSkills()
+        // .stream().map(x -> x.getId())
+        // .collect(Collectors.toList());
 
-            List<Skill> dbSkills = this.skillRepository.findByIdIn(reqSkills);
-            job.setSkills(dbSkills);
-        }
-        job.setCompany(c);
-
-        // or
-        // if(job.getSkills()!=null){
-        // List<Long> reqSkill=new ArrayList<>();
-        // for(Skill s : job.getSkills()){
-        // reqSkill.add(s.getId());
-        // }
-
-        // List<Skill> dbSkills= this.skillRepository.findByIdIn(reqSkill);
+        // List<Skill> dbSkills = this.skillRepository.findByIdIn(reqSkills);
         // job.setSkills(dbSkills);
         // }
+        // job.setCompany(c);
+
+        // or
+        if (job.getSkills() != null) {
+            List<Long> reqSkill = new ArrayList<>();
+            for (Skill s : job.getSkills()) {
+                reqSkill.add(s.getId());
+            }
+
+            List<Skill> dbSkills = this.skillRepository.findByIdIn(reqSkill);
+            job.setSkills(dbSkills);
+        }
         // create job
         Job curJob = this.jobRepository.save(job);
 

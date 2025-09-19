@@ -63,29 +63,18 @@ public class SkillService {
 
     public void deleteSkillById(Long id) {
         Skill skill = this.fetchSkillById(id);
-        // java 8
-        // if (skill != null) {
-        // skill.getJobs().forEach(job -> job.getSkills().remove(skill));
-        // this.skillRepository.delete(skill);
-        // }
 
         if (skill != null) {
-            // List<Job> jobs = skill.getJobs();
+            for (Job job : skill.getJobs()) {
+                job.getSkills().remove(skill);
+            }
 
-            // for (Job iJob : jobs) {
-            // List<Skill> jobSkills = iJob.getSkills();
+            for (Subscriber subs : skill.getSubscribers()) {
+                subs.getSkills().remove(skill);
+            }
 
-            // for (int i = 0; i < jobSkills.size(); i++) {
-            // Skill s = jobSkills.get(i);
-            // if (s != null && s.getId() == id) {
-            // jobSkills.remove(i);
-            // i--;
-            // }
-            // }
-            // }
-            skill.getSubscribers().forEach(subs -> subs.getSkills().remove(skill));
-            skill.getJobs().forEach(job -> job.getSkills().remove(skill));
             this.skillRepository.delete(skill);
         }
     }
+
 }
