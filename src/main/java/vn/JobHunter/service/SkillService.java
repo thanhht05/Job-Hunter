@@ -62,17 +62,20 @@ public class SkillService {
     }
 
     public void deleteSkillById(Long id) {
+        // tim skill theo id
         Skill skill = this.fetchSkillById(id);
 
+        // neu co skill
         if (skill != null) {
+            // lay skill cua job ra va xoa
             for (Job job : skill.getJobs()) {
                 job.getSkills().remove(skill);
             }
 
-            for (Subscriber subs : skill.getSubscribers()) {
-                subs.getSkills().remove(skill);
-            }
-
+            // for (Subscriber subs : skill.getSubscribers()) {
+            // subs.getSkills().remove(skill);
+            // }
+            // xoa skill cua job xong thi xoa skill nay
             this.skillRepository.delete(skill);
         }
     }
